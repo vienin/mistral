@@ -116,12 +116,13 @@ class TaskExecutionsController(rest.RestController):
                          types.uniquelist, types.list, types.uniquelist,
                          wtypes.text, types.uuid, wtypes.text, types.jsontype,
                          STATE_TYPES, wtypes.text, types.jsontype,
-                         types.jsontype, wtypes.text, wtypes.text)
+                         types.jsontype, wtypes.text, wtypes.text, bool)
     def get_all(self, task_execution_id, marker=None, limit=None,
                 sort_keys='created_at', sort_dirs='asc', fields='',
                 workflow_name=None, workflow_id=None, description=None,
                 params=None, state=None, state_info=None, input=None,
-                output=None, created_at=None, updated_at=None):
+                output=None, created_at=None, updated_at=None,
+                all_projects=False):
         """Return all executions that belong to the given task execution.
 
         :param task_execution_id: Task task execution ID.
@@ -155,8 +156,13 @@ class TaskExecutionsController(rest.RestController):
                            time and date.
         :param updated_at: Optional. Keep only resources with specific latest
                            update time and date.
+        :param all_projects: Optional. Get resources of all projects. Admin
+                             required.
         """
         acl.enforce('executions:list', context.ctx())
+
+        if all_projects:
+            acl.enforce('executions:list:all_projects', context.ctx())
 
         filters = filter_utils.create_filters_from_request_params(
             task_execution_id=task_execution_id,
@@ -174,8 +180,8 @@ class TaskExecutionsController(rest.RestController):
 
         LOG.debug(
             "Fetch executions. marker=%s, limit=%s, sort_keys=%s, "
-            "sort_dirs=%s, filters=%s", marker, limit, sort_keys, sort_dirs,
-            filters
+            "sort_dirs=%s, filters=%s, all_projects=%s", marker, limit,
+            sort_keys, sort_dirs, filters, all_projects
         )
 
         return rest_utils.get_all(
@@ -188,6 +194,7 @@ class TaskExecutionsController(rest.RestController):
             sort_keys=sort_keys,
             sort_dirs=sort_dirs,
             fields=fields,
+            all_projects=all_projects,
             **filters
         )
 
@@ -215,12 +222,13 @@ class TasksController(rest.RestController):
                          types.list, types.uniquelist, wtypes.text,
                          wtypes.text, types.uuid, types.uuid, STATE_TYPES,
                          wtypes.text, wtypes.text, types.jsontype, bool,
-                         wtypes.text, wtypes.text, bool, types.jsontype)
+                         wtypes.text, wtypes.text, bool, types.jsontype, bool)
     def get_all(self, marker=None, limit=None, sort_keys='created_at',
                 sort_dirs='asc', fields='', name=None, workflow_name=None,
                 workflow_id=None, workflow_execution_id=None, state=None,
                 state_info=None, result=None, published=None, processed=None,
-                created_at=None, updated_at=None, reset=None, env=None):
+                created_at=None, updated_at=None, reset=None, env=None,
+                all_projects=False):
         """Return all tasks.
 
         Where project_id is the same as the requester or
@@ -262,8 +270,13 @@ class TasksController(rest.RestController):
                            time and date.
         :param updated_at: Optional. Keep only resources with specific latest
                            update time and date.
+        :param all_projects: Optional. Get resources of all projects. Admin
+                             required.
         """
         acl.enforce('tasks:list', context.ctx())
+
+        if all_projects:
+            acl.enforce('tasks:list:all_projects', context.ctx())
 
         filters = filter_utils.create_filters_from_request_params(
             created_at=created_at,
@@ -283,7 +296,8 @@ class TasksController(rest.RestController):
 
         LOG.debug(
             "Fetch tasks. marker=%s, limit=%s, sort_keys=%s, sort_dirs=%s,"
-            " filters=%s", marker, limit, sort_keys, sort_dirs, filters
+            " filters=%s, all_projects=%s", marker, limit, sort_keys,
+            sort_dirs, filters, all_projects
         )
 
         return rest_utils.get_all(
@@ -296,6 +310,7 @@ class TasksController(rest.RestController):
             sort_keys=sort_keys,
             sort_dirs=sort_dirs,
             fields=fields,
+            all_projects=all_projects,
             **filters
         )
 
@@ -375,12 +390,13 @@ class ExecutionTasksController(rest.RestController):
                          types.uniquelist, types.list, types.uniquelist,
                          wtypes.text, wtypes.text, types.uuid, STATE_TYPES,
                          wtypes.text, wtypes.text, types.jsontype, bool,
-                         wtypes.text, wtypes.text, bool, types.jsontype)
+                         wtypes.text, wtypes.text, bool, types.jsontype, bool)
     def get_all(self, workflow_execution_id, marker=None, limit=None,
                 sort_keys='created_at', sort_dirs='asc', fields='', name=None,
                 workflow_name=None, workflow_id=None, state=None,
                 state_info=None, result=None, published=None, processed=None,
-                created_at=None, updated_at=None, reset=None, env=None):
+                created_at=None, updated_at=None, reset=None, env=None,
+                all_projects=False):
         """Return all tasks within the execution.
 
         Where project_id is the same as the requester or
@@ -422,8 +438,13 @@ class ExecutionTasksController(rest.RestController):
                            time and date.
         :param updated_at: Optional. Keep only resources with specific latest
                            update time and date.
+        :param all_projects: Optional. Get resources of all projects. Admin
+                             required.
         """
         acl.enforce('tasks:list', context.ctx())
+
+        if all_projects:
+            acl.enforce('tasks:list:all_projects', context.ctx())
 
         filters = filter_utils.create_filters_from_request_params(
             workflow_execution_id=workflow_execution_id,
@@ -443,9 +464,9 @@ class ExecutionTasksController(rest.RestController):
 
         LOG.debug(
             "Fetch tasks. workflow_execution_id=%s, marker=%s, limit=%s, "
-            "sort_keys=%s, sort_dirs=%s, filters=%s",
+            "sort_keys=%s, sort_dirs=%s, filters=%s, all_projects=%s",
             workflow_execution_id, marker, limit, sort_keys, sort_dirs,
-            filters
+            filters, all_projects
         )
 
         return rest_utils.get_all(
@@ -458,5 +479,6 @@ class ExecutionTasksController(rest.RestController):
             sort_keys=sort_keys,
             sort_dirs=sort_dirs,
             fields=fields,
+            all_projects=all_projects,
             **filters
         )
