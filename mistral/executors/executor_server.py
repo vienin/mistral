@@ -21,6 +21,8 @@ from mistral.service import base as service_base
 from mistral.services import action_execution_reporter
 from mistral import utils
 from mistral.utils import profiler as profiler_utils
+from mistral_lib.utils import cut
+
 
 CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
@@ -94,7 +96,7 @@ class ExecutorServer(service_base.MistralService):
             action_ex_id,
             action_cls_str,
             action_cls_attrs,
-            utils.cut(params),
+            cut(params),
             timeout
         )
 

@@ -43,6 +43,7 @@ from mistral.workflow import data_flow
 from mistral.workflow import lookup_utils
 from mistral.workflow import states
 from mistral_lib import actions as ml_actions
+from mistral_lib.utils import cut
 
 
 LOG = logging.getLogger(__name__)
@@ -107,7 +108,7 @@ class Workflow(object):
         wf_trace.info(
             self.wf_ex,
             'Starting workflow [name=%s, input=%s]' %
-            (wf_def.name, utils.cut(input_dict))
+            (wf_def.name, cut(input_dict))
         )
 
         self.validate_input(input_dict)

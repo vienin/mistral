@@ -30,6 +30,7 @@ from mistral.db.sqlalchemy import types as st
 from mistral import exceptions as exc
 from mistral.services import security
 from mistral import utils
+from mistral_lib.utils import cut
 
 
 # Definition objects.
@@ -296,7 +297,7 @@ for cls in utils.iter_subclasses(Execution):
         # inside utils.cut_dict() method.
         cls.state_info,
         'set',
-        lambda t, v, o, i: utils.cut(v, 65500),
+        lambda t, v, o, i: cut(v, 65500),
         retval=True
     )
 

@@ -24,6 +24,8 @@ from mistral.services import expiration_policy
 from mistral.services import scheduler
 from mistral import utils
 from mistral.utils import profiler as profiler_utils
+from mistral_lib.utils import cut
+
 
 LOG = logging.getLogger(__name__)
 
@@ -99,7 +101,7 @@ class EngineServer(service_base.MistralService):
             "Received RPC request 'start_workflow'[workflow_identifier=%s, "
             "workflow_input=%s, description=%s, params=%s]",
             wf_identifier,
-            utils.cut(wf_input),
+            cut(wf_input),
             description,
             params
         )
@@ -128,7 +130,7 @@ class EngineServer(service_base.MistralService):
             "Received RPC request 'start_action'[name=%s, input=%s, "
             "description=%s, params=%s]",
             action_name,
-            utils.cut(action_input),
+            cut(action_input),
             description,
             params
         )
