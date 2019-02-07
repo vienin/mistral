@@ -36,6 +36,7 @@ from mistral.workflow import data_flow
 from mistral.workflow import lookup_utils
 from mistral.workflow import states
 from mistral_lib import actions as ml_actions
+from mistral_lib.utils import cut
 
 
 LOG = logging.getLogger(__name__)
@@ -191,9 +192,9 @@ class Action(object):
 
         def _result_msg():
             if state == states.ERROR:
-                return "error = %s" % utils.cut(result.error)
+                return "error = %s" % cut(result.error)
 
-            return "result = %s" % utils.cut(result.data)
+            return "result = %s" % cut(result.data)
 
         if prev_state != state:
             wf_trace.info(
