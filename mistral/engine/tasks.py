@@ -362,6 +362,14 @@ class Task(object):
 
         assert self.task_ex
 
+        LOG.info(
+            '---------------- task.update %s:%s (%s %s)',
+            self.task_spec.get_name(),
+            self.task_ex.state,
+            self.wf_ex.name,
+            self.wf_ex.id
+        )
+
         # Record the current task state.
         old_task_state = self.task_ex.state
 
@@ -373,18 +381,59 @@ class Task(object):
 
             return
 
+        LOG.info(
+            '-------------1--- task.update %s:%s (%s %s)',
+            self.task_spec.get_name(),
+            self.task_ex.state,
+            self.wf_ex.name,
+            self.wf_ex.id
+        )
+
         # Update only if state transition is valid.
         if not states.is_valid_transition(self.task_ex.state, state):
             return
+
+        LOG.info(
+            '-----------2----- task.update %s:%s (%s %s)',
+            self.task_spec.get_name(),
+            self.task_ex.state,
+            self.wf_ex.name,
+            self.wf_ex.id
+        )
 
         # We can't set the task state to RUNNING if some other
         # child executions are paused.
         child_states = [a_ex.state for a_ex in self.task_ex.executions]
 
+        LOG.info(
+            '-----------3----- task.update %s:%s (%s %s), child states: %s',
+            self.task_spec.get_name(),
+            self.task_ex.state,
+            self.wf_ex.name,
+            self.wf_ex.id,
+            child_states,
+        )
+
         if state == states.RUNNING and states.PAUSED in child_states:
             return
 
+        LOG.info(
+            '-----------4----- task.update %s:%s (%s %s)',
+            self.task_spec.get_name(),
+            self.task_ex.state,
+            self.wf_ex.name,
+            self.wf_ex.id
+        )
+
         self.set_state(state, state_info)
+
+        LOG.info(
+            '-----------5----- task.update %s:%s (%s %s)',
+            self.task_spec.get_name(),
+            self.task_ex.state,
+            self.wf_ex.name,
+            self.wf_ex.id
+        )
 
         if states.is_completed(self.task_ex.state):
             self.register_workflow_completion_check()
