@@ -541,9 +541,6 @@ def schedule_on_action_complete(action_ex, delay=0):
 @db_utils.retry_on_db_error
 @post_tx_queue.run
 def _scheduled_on_action_update(action_ex_id, wf_action):
-    LOG.info('________________ SCHEDULEDDDDD: schedule_on_action_update %s',
-             action_ex_id)
-
     with db_api.transaction():
         if wf_action:
             action_ex = db_api.load_workflow_execution(action_ex_id)
@@ -551,8 +548,8 @@ def _scheduled_on_action_update(action_ex_id, wf_action):
             action_ex = db_api.load_action_execution(action_ex_id)
 
         if action_ex:
-            LOG.info('________________ SCHEDULEDDDDD 2 schedule_on_action_update %s',
-                     action_ex_id)
+            LOG.info('________________ SCHEDULEDDDDD schedule_on_action_update %s',
+                     action_ex.task_execution_id)
 
             _on_action_update(action_ex)
 
